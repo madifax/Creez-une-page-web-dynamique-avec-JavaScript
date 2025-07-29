@@ -42,6 +42,25 @@ q:before, q:after {
 	content: '';
 	content: none;
 }
+.modale-figure {
+  position: relative;
+  display: inline-block;
+  margin: 10px;
+}
+
+.trash-icon {
+  position: absolute;
+  top: 5px;
+  right: 50px;
+  max-width: 20px;
+  max-height: 20px;
+  cursor: pointer;
+  object-fit: contain;
+  z-index: 10;
+}
+
+
+
 table {
 	border-collapse: collapse;
 	border-spacing: 0;
@@ -53,22 +72,76 @@ body {
 	font-family: 'Work Sans' ;
 	font-size: 14px;
 }
+/* test */
+.form-ajout-photo {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 20px;
+}
 
-.gallerie {
+.form-ajout-photo input[type="file"],
+.form-ajout-photo input[type="text"],
+.form-ajout-photo select {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.form-ajout-photo button[type="submit"] {
+  padding: 10px;
+  background-color: #1D6154;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+/* /test */
+.modale {
 	background-color: white;
 	height: 680px;
 	width: 630px;
 	position: fixed;
 	top: 30%;
-	left: 30%;
+	left: 50%;
+	transform: translateX(-50%);
+	align-items: center;
 	z-index: 1000;
+	border-radius: 10px;
 }
+.gallerymodale {
+	display: grid;
+	grid-template-columns: repeat(5,77px );
+	grid-template-rows: repeat(3,114px);
+	width: 425px;
+	height: 400px;
+	margin-bottom: 60px;
+	margin-left: 100px;
+	margin-top: 40px;
+	gap: 10px;
+	border-bottom: #b3b3b3 solid 1px;
+
+}
+.gallerymodale img {
+	width: 76px;
+	height: 103px;
+	object-fit: cover;
+	
+}
+.gallerymodale figure {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  margin: 0;
+}
+
+
 h3 {
 	font-size: 26px;	
 	font-family: work sans;
 	display: flex;
 	justify-content: center;
-	margin-top: 30px;
+	margin-top: 50px;
 }
 
 .ajout {

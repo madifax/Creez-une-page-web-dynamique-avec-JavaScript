@@ -1,5 +1,4 @@
 const modeEdition = () => {
-
   const header = document.querySelector('header');
   const editModeHTML = '<p class="top"><i class="fa-regular fa-pen-to-square"></i>Mode édition</p>';
   header.insertAdjacentHTML('afterbegin', editModeHTML);
@@ -33,27 +32,20 @@ const modeEdition = () => {
     }
   });
 
- 
-  document.getElementById("modifier").addEventListener("click", function (e) {
+  // ✅ Charger dynamiquement le module à chaque clic
+  document.getElementById("modifier").addEventListener("click", async function (e) {
     e.preventDefault();
 
-    
-    if (document.getElementById("gallerie-photo-script")) {
-      console.log("Le script gallerie-photo.js est déjà chargé.");
-      return;
+    // Charger le module s’il n’est pas encore importé
+    if (!window.galleryModalLoaded) {
+      const module = await import('./gallerie-photo.js');
+      window.createGalleryModal = module.createGalleryModal;
+      window.galleryModalLoaded = true;
     }
 
-    const script = document.createElement("script");
-    script.src = "./gallerie-photo.js"; 
-    script.id = "gallerie-photo-script";
-    script.type = "module"; 
-    document.body.appendChild(script);
-
-    console.log("Script gallerie-photo.js chargé.");
+    // Appeler la fonction qui affiche la modale
+    window.createGalleryModal();
   });
-
 };
 
 export default modeEdition;
-
-

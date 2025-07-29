@@ -61,6 +61,7 @@ const displayCategories = async () => {
 };
 
 
+
 document.getElementById('categories').addEventListener('click', async (e) => {
   if (e.target.tagName === 'LI') {
     const categoryId = parseInt(e.target.value);
@@ -93,6 +94,26 @@ document.getElementById('logout')?.addEventListener('click', function (e) {
   // Rediriger vers la page de connexion
   window.location.href = './login.html'; // ou autre page selon ton app
 });
+
+const displayGallerymodale = (gallerymodaleItems) => {
+  const gallerymodaleContainer = document.querySelector('.gallerymodale'); 
+  gallerymodaleContainer.innerHTML = ''; 
+
+  gallerymodaleItems.forEach(item => {
+    const figure = document.createElement('figure');
+    const img = document.createElement('img');
+    const figcaption = document.createElement('figcaption');
+
+    img.src = item.imageUrl;
+    img.alt = item.title;
+    figcaption.textContent = item.title;
+
+    figure.appendChild(img);
+    figure.appendChild(figcaption);
+    gallerymodaleContainer.appendChild(figure);
+  });
+    checkToken();
+};
 
 
 (async () => {
