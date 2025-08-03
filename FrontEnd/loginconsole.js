@@ -7,8 +7,8 @@ document.getElementById('loginForm').addEventListener('submit', function (e) {
   const username = document.getElementById('username').value;
   const password = document.getElementById('password').value;
   const message = document.getElementById('message');
-console.log('Username:', username);
-console.log('Password:', password);
+// console.log('Username:', username);
+// console.log('Password:', password);
   fetch('http://localhost:5678/api/users/login', {
     method: 'POST',
     headers: {

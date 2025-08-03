@@ -2,58 +2,106 @@ export function afficherFormulaireAjout() {
   const section = document.querySelector('.modale');
   if (!section) return;
 
-  section.innerHTML = ''; // Vide la modale pour afficher le formulaire
+  section.innerHTML = '';
 
-  // Bouton de fermeture
+  // ✅ Flèche de retour vers la galerie
+  const retourBtn = document.createElement('i');
+  retourBtn.className = 'fleche-retour fa-solid fa-arrow-left';
+  retourBtn.style.cursor = 'pointer';
+  retourBtn.style.position = 'absolute';
+  retourBtn.style.top = '20px';
+  retourBtn.style.left = '20px';
+  retourBtn.style.fontSize = '1.2rem';
+  retourBtn.addEventListener('click', async () => {
+    section.remove();
+    document.querySelector('.modal-overlay')?.remove();
+    document.querySelector('div[style*="rgba(0, 0, 0, 0.3)"]')?.remove();
+    document.body.classList.remove('pagefoncer');
+
+    const mod = await import('./gallerie-photo.js');
+    mod.createGalleryModal();
+  });
+  section.appendChild(retourBtn);
+
+  // ❌ Bouton fermeture
   const closeIcon = document.createElement('i');
   closeIcon.className = 'croix fa-solid fa-xmark';
   closeIcon.addEventListener('click', () => {
     section.remove();
     document.querySelector('.modal-overlay')?.remove();
+    document.querySelector('div[style*="rgba(0, 0, 0, 0.3)"]')?.remove();
+    document.body.classList.remove('pagefoncer');
   });
   section.appendChild(closeIcon);
 
-  // Titre
+  // ✅ Titre
   const title = document.createElement('h3');
   title.textContent = 'Ajouter une photo';
   section.appendChild(title);
 
-  // Formulaire
+  // ✅ Formulaire
   const form = document.createElement('form');
   form.classList.add('form-ajout-photo');
   form.enctype = 'multipart/form-data';
 
-  // Champ image
-  const fileLabel = document.createElement('label');
-  fileLabel.textContent = 'Image :';
+  // ✅ Zone de téléchargement stylisée
+  const imageDropZone = document.createElement('div');
+  imageDropZone.classList.add('image-drop-zone');
+  imageDropZone.textContent = '+ Ajouter une image';
+
+  const imagePreview = document.createElement('img');
+  imagePreview.classList.add('image-preview');
+  imagePreview.style.display = 'none';
+  imageDropZone.appendChild(imagePreview);
+
   const fileInput = document.createElement('input');
   fileInput.type = 'file';
   fileInput.name = 'image';
   fileInput.accept = 'image/*';
   fileInput.required = true;
+  fileInput.style.display = 'none';
 
-  // Champ titre
+  imageDropZone.addEventListener('click', () => {
+    fileInput.click();
+  });
+
+  fileInput.addEventListener('change', () => {
+    const file = fileInput.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        imagePreview.src = reader.result;
+        imagePreview.style.display = 'block';
+        imageDropZone.classList.add('has-image');
+        imageDropZone.textContent = '';
+        imageDropZone.appendChild(imagePreview);
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+
+  // ✅ Titre
   const titleLabel = document.createElement('label');
-  titleLabel.textContent = 'Titre :';
+  titleLabel.textContent = 'Titre ';
   const titleInput = document.createElement('input');
   titleInput.type = 'text';
   titleInput.name = 'title';
   titleInput.required = true;
 
-  // Champ catégorie
+  // ✅ Catégorie
   const categoryLabel = document.createElement('label');
-  categoryLabel.textContent = 'Catégorie :';
+  categoryLabel.textContent = 'Catégorie ';
   const categorySelect = document.createElement('select');
   categorySelect.name = 'category';
   categorySelect.required = true;
 
-  // Bouton submit
+  // ✅ Bouton Valider
   const submitBtn = document.createElement('button');
   submitBtn.type = 'submit';
   submitBtn.textContent = 'Valider';
 
-  // Ajout des champs au formulaire
-  form.appendChild(fileLabel);
+  // ✅ Assembler le formulaire
+  form.appendChild(imageDropZone);
   form.appendChild(fileInput);
   form.appendChild(titleLabel);
   form.appendChild(titleInput);
@@ -62,7 +110,7 @@ export function afficherFormulaireAjout() {
   form.appendChild(submitBtn);
   section.appendChild(form);
 
-  // Chargement des catégories
+  // ✅ Charger les catégories
   fetch('http://localhost:5678/api/categories')
     .then(res => res.json())
     .then(categories => {
@@ -74,7 +122,7 @@ export function afficherFormulaireAjout() {
       });
     });
 
-  // Soumission du formulaire
+  // ✅ Envoi du formulaire
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const token = sessionStorage.getItem('token');
@@ -94,14 +142,8 @@ export function afficherFormulaireAjout() {
       });
 
       if (response.ok) {
-        alert('Photo ajoutée avec succès.');
-        form.reset();
-        // Retour à la galerie après ajout
-        import('./gallerie-photo.js').then(mod => {
-          section.remove();
-          document.querySelector('.modal-overlay')?.remove();
-          mod.createGalleryModal(); // recharge la galerie
-        });
+        // ✅ Rafraîchit la page entière
+        window.location.reload();
       } else {
         alert('Erreur lors de l’envoi. Vérifiez les champs.');
       }
@@ -111,5 +153,3 @@ export function afficherFormulaireAjout() {
     }
   });
 }
-
-

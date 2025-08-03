@@ -88,7 +88,7 @@ document.getElementById('logout')?.addEventListener('click', function (e) {
   // Si une fonction exitModeEdition existe, l'appeler pour nettoyer le DOM
   if (typeof exitModeEdition === "function") {
     exitModeEdition();
-    console.log("🧹 modeEdition désactivé.");
+    console.log("modeEdition désactivé.");
   }
 
   // Rediriger vers la page de connexion

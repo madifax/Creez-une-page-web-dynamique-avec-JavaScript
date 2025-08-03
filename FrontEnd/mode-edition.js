@@ -32,18 +32,17 @@ const modeEdition = () => {
     }
   });
 
-  // ✅ Charger dynamiquement le module à chaque clic
+  
   document.getElementById("modifier").addEventListener("click", async function (e) {
     e.preventDefault();
 
-    // Charger le module s’il n’est pas encore importé
+    
     if (!window.galleryModalLoaded) {
       const module = await import('./gallerie-photo.js');
       window.createGalleryModal = module.createGalleryModal;
       window.galleryModalLoaded = true;
     }
 
-    // Appeler la fonction qui affiche la modale
     window.createGalleryModal();
   });
 };
