@@ -81,39 +81,20 @@ if (categoryId === 0) {
 document.getElementById('logout')?.addEventListener('click', function (e) {
   e.preventDefault();
 
-  // Supprimer le token de sessionStorage
+  
   sessionStorage.removeItem('token');
   console.log("🔓 Token supprimé. Utilisateur déconnecté.");
 
-  // Si une fonction exitModeEdition existe, l'appeler pour nettoyer le DOM
+  
   if (typeof exitModeEdition === "function") {
     exitModeEdition();
     console.log("modeEdition désactivé.");
   }
 
-  // Rediriger vers la page de connexion
-  window.location.href = './login.html'; // ou autre page selon ton app
+  
+  window.location.href = './login.html'; 
 });
 
-const displayGallerymodale = (gallerymodaleItems) => {
-  const gallerymodaleContainer = document.querySelector('.gallerymodale'); 
-  gallerymodaleContainer.innerHTML = ''; 
-
-  gallerymodaleItems.forEach(item => {
-    const figure = document.createElement('figure');
-    const img = document.createElement('img');
-    const figcaption = document.createElement('figcaption');
-
-    img.src = item.imageUrl;
-    img.alt = item.title;
-    figcaption.textContent = item.title;
-
-    figure.appendChild(img);
-    figure.appendChild(figcaption);
-    gallerymodaleContainer.appendChild(figure);
-  });
-    checkToken();
-};
 
 
 (async () => {

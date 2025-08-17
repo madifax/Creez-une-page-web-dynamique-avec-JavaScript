@@ -75,8 +75,12 @@ export function afficherFormulaireAjout() {
         imageDropZone.classList.add('has-image');
         imageDropZone.textContent = '';
         imageDropZone.appendChild(imagePreview);
+
+        checkFormValidity();
       };
       reader.readAsDataURL(file);
+    } else {
+      checkFormValidity();
     }
   });
 
@@ -88,6 +92,8 @@ export function afficherFormulaireAjout() {
   titleInput.name = 'title';
   titleInput.required = true;
 
+  titleInput.addEventListener('input', checkFormValidity);
+
   // ✅ Catégorie
   const categoryLabel = document.createElement('label');
   categoryLabel.textContent = 'Catégorie ';
@@ -95,10 +101,28 @@ export function afficherFormulaireAjout() {
   categorySelect.name = 'category';
   categorySelect.required = true;
 
+  categorySelect.addEventListener('change', checkFormValidity);
+
   // ✅ Bouton Valider
   const submitBtn = document.createElement('button');
   submitBtn.type = 'submit';
   submitBtn.textContent = 'Valider';
+  submitBtn.disabled = true;
+  submitBtn.style.backgroundColor = '#A7A7A7';
+  submitBtn.style.cursor = 'not-allowed';
+
+  // ✅ Fonction de vérification de validité
+  function checkFormValidity() {
+    const hasImage = fileInput.files.length > 0;
+    const hasTitle = titleInput.value.trim() !== '';
+    const hasCategory = categorySelect.value !== '';
+
+    const isValid = hasImage && hasTitle && hasCategory;
+
+    submitBtn.disabled = !isValid;
+    submitBtn.style.backgroundColor = isValid ? '#1D6154' : '#A7A7A7';
+    submitBtn.style.cursor = isValid ? 'pointer' : 'not-allowed';
+  }
 
   // ✅ Assembler le formulaire
   form.appendChild(imageDropZone);
@@ -114,12 +138,21 @@ export function afficherFormulaireAjout() {
   fetch('http://localhost:5678/api/categories')
     .then(res => res.json())
     .then(categories => {
+      const defaultOption = document.createElement('option');
+      defaultOption.value = '';
+      defaultOption.textContent = '-- Choisir une catégorie --';
+      defaultOption.disabled = true;
+      defaultOption.selected = true;
+      categorySelect.appendChild(defaultOption);
+
       categories.forEach(cat => {
         const option = document.createElement('option');
         option.value = cat.id;
         option.textContent = cat.name;
         categorySelect.appendChild(option);
       });
+
+      checkFormValidity();
     });
 
   // ✅ Envoi du formulaire
@@ -142,8 +175,7 @@ export function afficherFormulaireAjout() {
       });
 
       if (response.ok) {
-        // ✅ Rafraîchit la page entière
-        window.location.reload();
+        window.location.reload(); // ✅ Rafraîchit la page
       } else {
         alert('Erreur lors de l’envoi. Vérifiez les champs.');
       }
