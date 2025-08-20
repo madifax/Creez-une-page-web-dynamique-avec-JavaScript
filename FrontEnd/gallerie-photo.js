@@ -86,6 +86,11 @@ export function createGalleryModal() {
             return;
           }
 
+          // Demande de confirmation simple
+          if (!confirm("Voulez-vous vraiment supprimer cette image ?")) {
+            return;
+          }
+
           try {
             const response = await fetch(`http://localhost:5678/api/works/${item.id}`, {
               method: 'DELETE',
@@ -95,11 +100,9 @@ export function createGalleryModal() {
             });
 
             if (response.ok) {
-              await loadGallery(); 
-              
+              await loadGallery();
               const event = new Event('imageSupprimee');
               window.dispatchEvent(event);
-
               console.log(`Image ID ${item.id} supprimée.`);
             } else {
               const errorText = await response.text();

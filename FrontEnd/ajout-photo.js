@@ -4,6 +4,7 @@ export function afficherFormulaireAjout() {
 
   section.innerHTML = '';
 
+  // Bouton retour
   const retourBtn = document.createElement('i');
   retourBtn.className = 'fleche-retour fa-solid fa-arrow-left';
   retourBtn.style.cursor = 'pointer';
@@ -22,6 +23,7 @@ export function afficherFormulaireAjout() {
   });
   section.appendChild(retourBtn);
 
+  // Bouton fermer
   const closeIcon = document.createElement('i');
   closeIcon.className = 'croix fa-solid fa-xmark';
   closeIcon.addEventListener('click', () => {
@@ -32,10 +34,12 @@ export function afficherFormulaireAjout() {
   });
   section.appendChild(closeIcon);
 
+  // Titre
   const title = document.createElement('h3');
   title.textContent = 'Ajouter une photo';
   section.appendChild(title);
 
+  // Formulaire
   const form = document.createElement('form');
   form.classList.add('form-ajout-photo');
   form.enctype = 'multipart/form-data';
@@ -72,7 +76,6 @@ export function afficherFormulaireAjout() {
   fileInput.addEventListener('change', () => {
     const file = fileInput.files[0];
     if (file) {
-
       if (file.size > 4 * 1024 * 1024) {
         alert('Le fichier est trop volumineux (max 4 Mo).');
         fileInput.value = '';
@@ -103,13 +106,13 @@ export function afficherFormulaireAjout() {
     }
   });
 
+  // Titre et catégorie
   const titleLabel = document.createElement('label');
   titleLabel.textContent = 'Titre ';
   const titleInput = document.createElement('input');
   titleInput.type = 'text';
   titleInput.name = 'title';
   titleInput.required = true;
-
   titleInput.addEventListener('input', checkFormValidity);
 
   const categoryLabel = document.createElement('label');
@@ -117,7 +120,6 @@ export function afficherFormulaireAjout() {
   const categorySelect = document.createElement('select');
   categorySelect.name = 'category';
   categorySelect.required = true;
-
   categorySelect.addEventListener('change', checkFormValidity);
 
   const submitBtn = document.createElement('button');
@@ -131,7 +133,6 @@ export function afficherFormulaireAjout() {
     const hasImage = fileInput.files.length > 0;
     const hasTitle = titleInput.value.trim() !== '';
     const hasCategory = categorySelect.value !== '';
-
     const isValid = hasImage && hasTitle && hasCategory;
 
     submitBtn.disabled = !isValid;
@@ -139,6 +140,7 @@ export function afficherFormulaireAjout() {
     submitBtn.style.cursor = isValid ? 'pointer' : 'not-allowed';
   }
 
+  // Ajout des éléments au formulaire
   form.appendChild(imageDropZone);
   form.appendChild(fileInput);
   form.appendChild(titleLabel);
@@ -148,6 +150,7 @@ export function afficherFormulaireAjout() {
   form.appendChild(submitBtn);
   section.appendChild(form);
 
+  // Charger les catégories
   fetch('http://localhost:5678/api/categories')
     .then(res => res.json())
     .then(categories => {
@@ -168,6 +171,7 @@ export function afficherFormulaireAjout() {
       checkFormValidity();
     });
 
+  // Soumission du formulaire
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const token = sessionStorage.getItem('token');
@@ -180,14 +184,23 @@ export function afficherFormulaireAjout() {
     try {
       const response = await fetch('http://localhost:5678/api/works', {
         method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`
-        },
+        headers: { Authorization: `Bearer ${token}` },
         body: formData
       });
 
       if (response.ok) {
-        window.location.reload()
+        alert('Photo ajoutée avec succès !');
+
+        // Réinitialiser le formulaire
+        form.reset();
+        imagePreview.src = '';
+        imagePreview.style.display = 'none';
+        imageDropZone.classList.remove('has-image');
+        checkFormValidity();
+
+        // Déclencher un événement pour mettre à jour la galerie
+        window.dispatchEvent(new Event('nouvelleImageAjoutee'));
+
       } else {
         alert('Erreur lors de l’envoi. Vérifiez les champs.');
       }
