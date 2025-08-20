@@ -86,7 +86,7 @@ export function createGalleryModal() {
             return;
           }
 
-          // Demande de confirmation simple
+         
           if (!confirm("Voulez-vous vraiment supprimer cette image ?")) {
             return;
           }

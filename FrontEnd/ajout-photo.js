@@ -57,6 +57,13 @@ export function afficherFormulaireAjout() {
   infoText.textContent = 'jpg, png : 4mo max';
   imageDropZone.appendChild(infoText);
 
+  const errorMsg = document.createElement('p');
+  errorMsg.classList.add('error-msg');
+  errorMsg.style.color = 'red';
+  errorMsg.style.fontSize = '0.9rem';
+  errorMsg.style.display = 'none';
+  imageDropZone.appendChild(errorMsg);
+
   const imagePreview = document.createElement('img');
   imagePreview.classList.add('image-preview');
   imagePreview.style.display = 'none';
@@ -75,15 +82,18 @@ export function afficherFormulaireAjout() {
 
   fileInput.addEventListener('change', () => {
     const file = fileInput.files[0];
+    errorMsg.style.display = 'none'; // reset message
     if (file) {
       if (file.size > 4 * 1024 * 1024) {
-        alert('Le fichier est trop volumineux (max 4 Mo).');
+        errorMsg.textContent = '⚠️ Le fichier est trop volumineux (max 4 Mo).';
+        errorMsg.style.display = 'block';
         fileInput.value = '';
         return;
       }
 
       if (!['image/jpeg', 'image/png'].includes(file.type)) {
-        alert('Seuls les fichiers JPG et PNG sont autorisés.');
+        errorMsg.textContent = '⚠️ Seuls les fichiers JPG et PNG sont autorisés.';
+        errorMsg.style.display = 'block';
         fileInput.value = '';
         return;
       }
@@ -97,6 +107,7 @@ export function afficherFormulaireAjout() {
         imageDropZone.innerHTML = '';
         imageDropZone.appendChild(imagePreview);
         imageDropZone.appendChild(infoText);
+        imageDropZone.appendChild(errorMsg);
 
         checkFormValidity();
       };
@@ -189,6 +200,8 @@ export function afficherFormulaireAjout() {
       });
 
       if (response.ok) {
+        const newWork = await response.json(); // récupère la nouvelle photo depuis l’API
+
         alert('Photo ajoutée avec succès !');
 
         // Réinitialiser le formulaire
@@ -196,9 +209,26 @@ export function afficherFormulaireAjout() {
         imagePreview.src = '';
         imagePreview.style.display = 'none';
         imageDropZone.classList.remove('has-image');
+        errorMsg.style.display = 'none';
         checkFormValidity();
 
-        // Déclencher un événement pour mettre à jour la galerie
+        // Ajouter directement la nouvelle image à la galerie principale
+        const gallery = document.querySelector('.gallery');
+        if (gallery) {
+          const figure = document.createElement('figure');
+          const img = document.createElement('img');
+          img.src = newWork.imageUrl;
+          img.alt = newWork.title;
+
+          const figcaption = document.createElement('figcaption');
+          figcaption.textContent = newWork.title;
+
+          figure.appendChild(img);
+          figure.appendChild(figcaption);
+          gallery.appendChild(figure);
+        }
+
+        // Event pour autres composants si besoin
         window.dispatchEvent(new Event('nouvelleImageAjoutee'));
 
       } else {
