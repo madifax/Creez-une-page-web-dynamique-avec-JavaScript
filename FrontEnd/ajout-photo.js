@@ -4,7 +4,6 @@ export function afficherFormulaireAjout() {
 
   section.innerHTML = '';
 
-  // ✅ Flèche de retour vers la galerie
   const retourBtn = document.createElement('i');
   retourBtn.className = 'fleche-retour fa-solid fa-arrow-left';
   retourBtn.style.cursor = 'pointer';
@@ -23,7 +22,6 @@ export function afficherFormulaireAjout() {
   });
   section.appendChild(retourBtn);
 
-  // ❌ Bouton fermeture
   const closeIcon = document.createElement('i');
   closeIcon.className = 'croix fa-solid fa-xmark';
   closeIcon.addEventListener('click', () => {
@@ -34,20 +32,26 @@ export function afficherFormulaireAjout() {
   });
   section.appendChild(closeIcon);
 
-  // ✅ Titre
   const title = document.createElement('h3');
   title.textContent = 'Ajouter une photo';
   section.appendChild(title);
 
-  // ✅ Formulaire
   const form = document.createElement('form');
   form.classList.add('form-ajout-photo');
   form.enctype = 'multipart/form-data';
 
-  // ✅ Zone de téléchargement stylisée
   const imageDropZone = document.createElement('div');
   imageDropZone.classList.add('image-drop-zone');
-  imageDropZone.textContent = '+ Ajouter une image';
+
+  const dropText = document.createElement('span');
+  dropText.textContent = '+ Ajouter photo';
+  dropText.classList.add('drop-text');
+  imageDropZone.appendChild(dropText);
+
+  const infoText = document.createElement('p');
+  infoText.classList.add('image-info');
+  infoText.textContent = 'jpg, png : 4mo max';
+  imageDropZone.appendChild(infoText);
 
   const imagePreview = document.createElement('img');
   imagePreview.classList.add('image-preview');
@@ -68,13 +72,28 @@ export function afficherFormulaireAjout() {
   fileInput.addEventListener('change', () => {
     const file = fileInput.files[0];
     if (file) {
+
+      if (file.size > 4 * 1024 * 1024) {
+        alert('Le fichier est trop volumineux (max 4 Mo).');
+        fileInput.value = '';
+        return;
+      }
+
+      if (!['image/jpeg', 'image/png'].includes(file.type)) {
+        alert('Seuls les fichiers JPG et PNG sont autorisés.');
+        fileInput.value = '';
+        return;
+      }
+
       const reader = new FileReader();
       reader.onload = () => {
         imagePreview.src = reader.result;
         imagePreview.style.display = 'block';
         imageDropZone.classList.add('has-image');
-        imageDropZone.textContent = '';
+
+        imageDropZone.innerHTML = '';
         imageDropZone.appendChild(imagePreview);
+        imageDropZone.appendChild(infoText);
 
         checkFormValidity();
       };
@@ -84,7 +103,6 @@ export function afficherFormulaireAjout() {
     }
   });
 
-  // ✅ Titre
   const titleLabel = document.createElement('label');
   titleLabel.textContent = 'Titre ';
   const titleInput = document.createElement('input');
@@ -94,7 +112,6 @@ export function afficherFormulaireAjout() {
 
   titleInput.addEventListener('input', checkFormValidity);
 
-  // ✅ Catégorie
   const categoryLabel = document.createElement('label');
   categoryLabel.textContent = 'Catégorie ';
   const categorySelect = document.createElement('select');
@@ -103,7 +120,6 @@ export function afficherFormulaireAjout() {
 
   categorySelect.addEventListener('change', checkFormValidity);
 
-  // ✅ Bouton Valider
   const submitBtn = document.createElement('button');
   submitBtn.type = 'submit';
   submitBtn.textContent = 'Valider';
@@ -111,7 +127,6 @@ export function afficherFormulaireAjout() {
   submitBtn.style.backgroundColor = '#A7A7A7';
   submitBtn.style.cursor = 'not-allowed';
 
-  // ✅ Fonction de vérification de validité
   function checkFormValidity() {
     const hasImage = fileInput.files.length > 0;
     const hasTitle = titleInput.value.trim() !== '';
@@ -124,7 +139,6 @@ export function afficherFormulaireAjout() {
     submitBtn.style.cursor = isValid ? 'pointer' : 'not-allowed';
   }
 
-  // ✅ Assembler le formulaire
   form.appendChild(imageDropZone);
   form.appendChild(fileInput);
   form.appendChild(titleLabel);
@@ -134,7 +148,6 @@ export function afficherFormulaireAjout() {
   form.appendChild(submitBtn);
   section.appendChild(form);
 
-  // ✅ Charger les catégories
   fetch('http://localhost:5678/api/categories')
     .then(res => res.json())
     .then(categories => {
@@ -155,7 +168,6 @@ export function afficherFormulaireAjout() {
       checkFormValidity();
     });
 
-  // ✅ Envoi du formulaire
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const token = sessionStorage.getItem('token');
@@ -175,7 +187,7 @@ export function afficherFormulaireAjout() {
       });
 
       if (response.ok) {
-        window.location.reload(); // ✅ Rafraîchit la page
+        window.location.reload()
       } else {
         alert('Erreur lors de l’envoi. Vérifiez les champs.');
       }

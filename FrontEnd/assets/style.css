@@ -115,7 +115,7 @@ body {
 	height: 680px;
 	width: 630px;
 	position: fixed;
-	top: 30%;
+	top: 20%;
 	left: 50%;
 	transform: translateX(-50%);
 	align-items: center;
@@ -446,7 +446,23 @@ ul li a {
   margin-bottom: 15px;
   overflow: hidden;
   transition: border 0.3s ease;
+  flex-direction: column; 
+  gap: 8px; 
 }
+
+.drop-text {
+  color: #2c3e50;
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+.image-info {
+  font-size: 0.8rem;
+  color: #666;
+  font-style: italic;
+  text-align: center;
+}
+
 
 .image-drop-zone:hover {
   border-color: #999;
